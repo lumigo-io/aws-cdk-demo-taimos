@@ -4,12 +4,14 @@ import { JobPermission } from 'projen/lib/github/workflows-model';
 
 const project = new awscdk.AwsCdkTypeScriptApp({
   cdkVersion: '2.77.0',
+  minNodeVersion: '18.0.0',
   defaultReleaseBranch: 'main',
   name: 'aws-cdk-demo-taimos',
   projenrcTs: true,
   deps: [
     'cdk-iam-floyd',
     'aws-cdk-github-oidc',
+    '@lumigo/cdk-constructs-v2',
   ],
   devDeps: [
     '@types/aws-lambda',

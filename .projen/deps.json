@@ -10,7 +10,7 @@
     },
     {
       "name": "@types/node",
-      "version": "^16",
+      "version": "^18",
       "type": "build"
     },
     {
@@ -78,6 +78,10 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "@lumigo/cdk-constructs-v2",
+      "type": "runtime"
     },
     {
       "name": "aws-cdk-github-oidc",

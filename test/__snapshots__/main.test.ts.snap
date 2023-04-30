@@ -2,11 +2,796 @@
 
 exports[`Snapshot 1`] = `
 {
+  "Outputs": {
+    "EcsAppLoadBalancerDNS587B999A": {
+      "Value": {
+        "Fn::GetAtt": [
+          "EcsAppLBF9DB4E1C",
+          "DNSName",
+        ],
+      },
+    },
+    "EcsAppServiceURL828FD37A": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "EcsAppLBF9DB4E1C",
+                "DNSName",
+              ],
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": {
     "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "EBToQueueRule3B0B18B2": {
+      "Properties": {
+        "EventPattern": {
+          "source": [
+            "lumigo-test",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "Queue4A7E3555",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "EcsAppLBF9DB4E1C": {
+      "DependsOn": [
+        "EcsAppVpcpublicSubnet1DefaultRoute80F1DA4F",
+        "EcsAppVpcpublicSubnet1RouteTableAssociation31DE1CE8",
+        "EcsAppVpcpublicSubnet2DefaultRouteED67A876",
+        "EcsAppVpcpublicSubnet2RouteTableAssociation21866A5A",
+        "EcsAppVpcpublicSubnet3DefaultRoute5E0E94DB",
+        "EcsAppVpcpublicSubnet3RouteTableAssociation73EC88CB",
+      ],
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
+            "Key": "deletion_protection.enabled",
+            "Value": "false",
+          },
+        ],
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "EcsAppLBSecurityGroup271FA301",
+              "GroupId",
+            ],
+          },
+        ],
+        "Subnets": [
+          {
+            "Ref": "EcsAppVpcpublicSubnet1SubnetBE1B65B9",
+          },
+          {
+            "Ref": "EcsAppVpcpublicSubnet2Subnet25241F04",
+          },
+          {
+            "Ref": "EcsAppVpcpublicSubnet3Subnet835ACDCB",
+          },
+        ],
+        "Type": "application",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "EcsAppLBPublicListener608ADE84": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "EcsAppLBPublicListenerECSGroupC5EDC5B2",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": {
+          "Ref": "EcsAppLBF9DB4E1C",
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
+    "EcsAppLBPublicListenerECSGroupC5EDC5B2": {
+      "Properties": {
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
+        "TargetType": "ip",
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
+    "EcsAppLBSecurityGroup271FA301": {
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB testEcsAppLB603596D2",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80,
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EcsAppLBSecurityGrouptotestEcsAppServiceSecurityGroupE1FE75E080A7A3B49C": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "EcsAppServiceSecurityGroup8C37E014",
+            "GroupId",
+          ],
+        },
+        "FromPort": 80,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "EcsAppLBSecurityGroup271FA301",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "EcsAppService4FA65657": {
+      "DependsOn": [
+        "EcsAppLBPublicListenerECSGroupC5EDC5B2",
+        "EcsAppLBPublicListener608ADE84",
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "EcsDefaultClusterMnL3mNNYNVpc18E0451A",
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50,
+        },
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "web",
+            "ContainerPort": 80,
+            "TargetGroupArn": {
+              "Ref": "EcsAppLBPublicListenerECSGroupC5EDC5B2",
+            },
+          },
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "EcsAppServiceSecurityGroup8C37E014",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": [
+              {
+                "Ref": "EcsAppVpcpublicSubnet1SubnetBE1B65B9",
+              },
+              {
+                "Ref": "EcsAppVpcpublicSubnet2Subnet25241F04",
+              },
+              {
+                "Ref": "EcsAppVpcpublicSubnet3Subnet835ACDCB",
+              },
+            ],
+          },
+        },
+        "TaskDefinition": {
+          "Ref": "EcsAppTaskDef709A05A0",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "EcsAppServiceSecurityGroup8C37E014": {
+      "Properties": {
+        "GroupDescription": "test/EcsApp/Resource/Service/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "EcsAppServiceSecurityGroupfromtestEcsAppLBSecurityGroupA41624AF8086DB989B": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 80,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "EcsAppServiceSecurityGroup8C37E014",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "EcsAppLBSecurityGroup271FA301",
+            "GroupId",
+          ],
+        },
+        "ToPort": 80,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "EcsAppTaskDef709A05A0": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Essential": true,
+            "Image": {
+              "Fn::Sub": "123456789012.dkr.ecr.eu-central-1.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-123456789012-eu-central-1:b3630920feccec78bea7cbaad7300005b21446b42e78640e0f15b69325a337d6",
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "EcsAppTaskDefwebLogGroupC52CEF25",
+                },
+                "awslogs-region": "eu-central-1",
+                "awslogs-stream-prefix": "Resource",
+              },
+            },
+            "Name": "web",
+            "PortMappings": [
+              {
+                "ContainerPort": 80,
+                "Protocol": "tcp",
+              },
+            ],
+          },
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "EcsAppTaskDefExecutionRoleD8F5BFF4",
+            "Arn",
+          ],
+        },
+        "Family": "testEcsAppTaskDefC6220FF8",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE",
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "EcsAppTaskDefTaskRole2C789DDB",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "EcsAppTaskDefExecutionRoleD8F5BFF4": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EcsAppTaskDefExecutionRoleDefaultPolicyDA63283E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:eu-central-1:123456789012:repository/cdk-hnb659fds-container-assets-123456789012-eu-central-1",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EcsAppTaskDefwebLogGroupC52CEF25",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "EcsAppTaskDefExecutionRoleDefaultPolicyDA63283E",
+        "Roles": [
+          {
+            "Ref": "EcsAppTaskDefExecutionRoleD8F5BFF4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "EcsAppTaskDefTaskRole2C789DDB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "EcsAppTaskDefwebLogGroupC52CEF25": {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "EcsAppVpcACA3508B": {
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "EcsAppVpcIGW821A04D2": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "EcsAppVpcVPCGW291A342C": {
+      "Properties": {
+        "InternetGatewayId": {
+          "Ref": "EcsAppVpcIGW821A04D2",
+        },
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
+    "EcsAppVpcpublicSubnet1DefaultRoute80F1DA4F": {
+      "DependsOn": [
+        "EcsAppVpcVPCGW291A342C",
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "EcsAppVpcIGW821A04D2",
+        },
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet1RouteTable5EEC1D79",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "EcsAppVpcpublicSubnet1RouteTable5EEC1D79": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "EcsAppVpcpublicSubnet1RouteTableAssociation31DE1CE8": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet1RouteTable5EEC1D79",
+        },
+        "SubnetId": {
+          "Ref": "EcsAppVpcpublicSubnet1SubnetBE1B65B9",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "EcsAppVpcpublicSubnet1SubnetBE1B65B9": {
+      "Properties": {
+        "AvailabilityZone": "dummy1a",
+        "CidrBlock": "10.0.0.0/18",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet1",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "EcsAppVpcpublicSubnet2DefaultRouteED67A876": {
+      "DependsOn": [
+        "EcsAppVpcVPCGW291A342C",
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "EcsAppVpcIGW821A04D2",
+        },
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet2RouteTableE3ACA9FC",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "EcsAppVpcpublicSubnet2RouteTableAssociation21866A5A": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet2RouteTableE3ACA9FC",
+        },
+        "SubnetId": {
+          "Ref": "EcsAppVpcpublicSubnet2Subnet25241F04",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "EcsAppVpcpublicSubnet2RouteTableE3ACA9FC": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "EcsAppVpcpublicSubnet2Subnet25241F04": {
+      "Properties": {
+        "AvailabilityZone": "dummy1b",
+        "CidrBlock": "10.0.64.0/18",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet2",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "EcsAppVpcpublicSubnet3DefaultRoute5E0E94DB": {
+      "DependsOn": [
+        "EcsAppVpcVPCGW291A342C",
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "EcsAppVpcIGW821A04D2",
+        },
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet3RouteTable5C10BB89",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "EcsAppVpcpublicSubnet3RouteTable5C10BB89": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet3",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "EcsAppVpcpublicSubnet3RouteTableAssociation73EC88CB": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "EcsAppVpcpublicSubnet3RouteTable5C10BB89",
+        },
+        "SubnetId": {
+          "Ref": "EcsAppVpcpublicSubnet3Subnet835ACDCB",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "EcsAppVpcpublicSubnet3Subnet835ACDCB": {
+      "Properties": {
+        "AvailabilityZone": "dummy1c",
+        "CidrBlock": "10.0.128.0/18",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "public",
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          {
+            "Key": "Name",
+            "Value": "test/EcsApp/Vpc/publicSubnet3",
+          },
+        ],
+        "VpcId": {
+          "Ref": "EcsAppVpcACA3508B",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "EcsDefaultClusterMnL3mNNYNVpc18E0451A": {
+      "Type": "AWS::ECS::Cluster",
+    },
+    "Handler886CB40B": {
+      "DependsOn": [
+        "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "HandlerServiceRoleFCDC14AE",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-eu-central-1",
+          "S3Key": "61c08f9f6401741cabf29d391d49acbe36dbd9142bc2a058e7155677aceffa37.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "AWS_NODEJS_CONNECTION_REUSE_ENABLED": "1",
+            "HTTP_TARGET": "https://heise.de",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "HandlerServiceRoleFCDC14AE",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HandlerServiceRoleDefaultPolicyCBD0CC91": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "Queue4A7E3555",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HandlerServiceRoleDefaultPolicyCBD0CC91",
+        "Roles": [
+          {
+            "Ref": "HandlerServiceRoleFCDC14AE",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "HandlerServiceRoleFCDC14AE": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HandlerSqsEventSourcetestQueue6AD77D9D89E37BDD": {
+      "Properties": {
+        "BatchSize": 1,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "Queue4A7E3555",
+            "Arn",
+          ],
+        },
+        "FunctionName": {
+          "Ref": "Handler886CB40B",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "Queue4A7E3555": {
+      "DeletionPolicy": "Delete",
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "QueuePolicy25439813": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": {
+                    "Fn::GetAtt": [
+                      "EBToQueueRule3B0B18B2",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "Queue4A7E3555",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "Queue4A7E3555",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
     },
   },
   "Rules": {

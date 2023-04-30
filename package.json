@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.114",
     "@types/jest": "^29.5.1",
-    "@types/node": "^16",
+    "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "aws-cdk": "^2.77.0",
@@ -44,10 +44,14 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@lumigo/cdk-constructs-v2": "^0.1.22",
     "aws-cdk-github-oidc": "^2.3.2",
     "aws-cdk-lib": "^2.77.0",
     "cdk-iam-floyd": "^0.507.0",
     "constructs": "^10.0.5"
+  },
+  "engines": {
+    "node": ">= 18.0.0"
   },
   "license": "Apache-2.0",
   "version": "0.0.0",

@@ -1,4 +1,5 @@
-import { App } from 'aws-cdk-lib';
+import { Lumigo } from '@lumigo/cdk-constructs-v2';
+import { App, SecretValue } from 'aws-cdk-lib';
 import { GitHubAccessStack } from './github-access';
 import { AppStack } from './stack';
 
@@ -16,6 +17,11 @@ new AppStack(app, 'aws-cdk-demo-taimos-hoegertn', {
     account: '538118019757',
     region: 'eu-central-1',
   },
+});
+
+new Lumigo({ lumigoToken: SecretValue.secretsManager('AccessKeys', { jsonField: 'LumigoToken' }) }).traceEverything(app, {
+  traceEcs: true, // This activates adding tracing to Amazon ECS task definitions and services as well
+  lumigoTag: 'Webinar',
 });
 
 app.synth();
