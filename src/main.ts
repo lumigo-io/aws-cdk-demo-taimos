@@ -1,7 +1,15 @@
 import { App } from 'aws-cdk-lib';
+import { GitHubAccessStack } from './github-access';
 import { AppStack } from './stack';
 
 const app = new App();
+
+new GitHubAccessStack(app, 'aws-cdk-demo-taimos-github', {
+  env: {
+    account: '538118019757',
+    region: 'eu-central-1',
+  },
+});
 
 new AppStack(app, 'aws-cdk-demo-taimos-hoegertn', {
   env: {
