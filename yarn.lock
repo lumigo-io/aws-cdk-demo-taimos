@@ -990,6 +990,11 @@
     "@tufjs/canonical-json" "1.0.0"
     minimatch "^7.4.6"
 
+"@types/aws-lambda@^8.10.114":
+  version "8.10.114"
+  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.114.tgz#4048273ebcd517dd118ecaa34b1368d275b6c7ad"
+  integrity sha512-M8WpEGfC9iQ6V2Ccq6nGIXoQgeVc6z0Ngk8yCOL5V/TYIxshvb0MWQYLFFTZDesL0zmsoBc4OBjG9DB/4rei6w==
+
 "@types/babel__core@^7.1.14":
   version "7.20.0"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.0.tgz#61bc5a4cae505ce98e1e36c5445e4bee060d8891"
@@ -1407,7 +1412,7 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-cdk-lib@^2.1.0:
+aws-cdk-lib@^2.77.0:
   version "2.77.0"
   resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.77.0.tgz#803031c2457bc5786ed14fbb967788fd526a9358"
   integrity sha512-T0GUFHBY1B+LkyGk1Df5E1PXwHa7BqvafD4pGvpwWqu8Mu9s/i0kp8YJu6xY//hEC5R8O7V6bfyQJ0S9pUqwQg==
@@ -1426,7 +1431,7 @@ aws-cdk-lib@^2.1.0:
     table "^6.8.1"
     yaml "1.10.2"
 
-aws-cdk@^2.1.0:
+aws-cdk@^2.77.0:
   version "2.77.0"
   resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.77.0.tgz#1004b60455ba6eca8c110bc430583ce14ad8b651"
   integrity sha512-f0UpWjBxrFkINqlwL50OpIIC03V39hTzg4+NEBlfUc/ftFX8WQQYyT6h29IfxT9Tgo+YoEMlM1nnH/s1c+VKSw==
