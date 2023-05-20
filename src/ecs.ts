@@ -31,10 +31,6 @@ export class EcsApp extends Construct {
       },
       taskImageOptions: {
         containerPort: 8080,
-        environment: {
-          LUMIGO_DEBUG_SPANDUMP: '/dev/stdout',
-          LUMIGO_DEBUG: 'true',
-        },
         image: aws_ecs.ContainerImage.fromAsset(path.join(__dirname, '..', 'ecs-app'), {
           platform: aws_ecr_assets.Platform.LINUX_AMD64,
         }),
@@ -48,6 +44,10 @@ export class EcsApp extends Construct {
       timeout: Duration.seconds(10),
     });
     this.service.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '10');
+
+    // Override Lumigo tracer image to latest version
+    const taskDef = (this.service.taskDefinition.node.defaultChild as aws_ecs.CfnTaskDefinition);
+    taskDef.addPropertyOverride('ContainerDefinitions.1.Image', 'public.ecr.aws/lumigo/lumigo-autotrace:v14');
 
   }
 }
