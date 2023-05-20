@@ -26,7 +26,8 @@ public class MyEndpoint {
 
 		try (Response response = client.newCall(request).execute()) {
 			String res = response.body().string();
-			System.out.println(res);
+			// System.out.println(res);
+			System.out.println("GOT RESULT");
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();

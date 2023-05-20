@@ -19,7 +19,11 @@ new AppStack(app, 'aws-cdk-demo-taimos-hoegertn', {
   },
 });
 
-new Lumigo({ lumigoToken: SecretValue.secretsManager('AccessKeys', { jsonField: 'LumigoToken' }) }).traceEverything(app, {
+// new Lumigo({ lumigoToken: SecretValue.secretsManager('AccessKeys', { jsonField: 'LumigoToken' }) }).traceEverything(app, {
+//   traceEcs: true, // This activates adding tracing to Amazon ECS task definitions and services as well
+//   lumigoTag: 'Webinar',
+// });
+new Lumigo({ lumigoToken: SecretValue.secretsManager('LumigoToken') }).traceEverything(app, {
   traceEcs: true, // This activates adding tracing to Amazon ECS task definitions and services as well
   lumigoTag: 'Webinar',
 });
