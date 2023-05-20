@@ -30,6 +30,7 @@ export class EcsApp extends Construct {
         rollback: true,
       },
       taskImageOptions: {
+        containerPort: 8080,
         image: aws_ecs.ContainerImage.fromAsset(path.join(__dirname, '..', 'ecs-app'), {
           platform: aws_ecr_assets.Platform.LINUX_AMD64,
         }),

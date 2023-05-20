@@ -1,4 +1,4 @@
-import { Stack, StackProps, aws_events, aws_events_targets, aws_lambda, aws_lambda_event_sources, aws_lambda_nodejs, aws_sqs } from 'aws-cdk-lib';
+import { Duration, Stack, StackProps, aws_events, aws_events_targets, aws_lambda, aws_lambda_event_sources, aws_lambda_nodejs, aws_sqs } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { EcsApp } from './ecs';
 
@@ -21,6 +21,7 @@ export class AppStack extends Stack {
 
     const lambda = new aws_lambda_nodejs.NodejsFunction(this, 'Handler', {
       runtime: aws_lambda.Runtime.NODEJS_18_X,
+      timeout: Duration.seconds(10),
     });
     lambda.addEventSource(new aws_lambda_event_sources.SqsEventSource(queue, { batchSize: 1 }));
 
