@@ -93,6 +93,10 @@
       "type": "runtime"
     },
     {
+      "name": "axios",
+      "type": "runtime"
+    },
+    {
       "name": "cdk-iam-floyd",
       "type": "runtime"
     },

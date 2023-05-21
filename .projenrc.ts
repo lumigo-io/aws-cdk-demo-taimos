@@ -12,6 +12,7 @@ const project = new awscdk.AwsCdkTypeScriptApp({
     'cdk-iam-floyd',
     'aws-cdk-github-oidc',
     '@lumigo/cdk-constructs-v2',
+    'axios',
   ],
   devDeps: [
     '@types/aws-lambda',

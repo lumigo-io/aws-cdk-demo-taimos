@@ -45,9 +45,5 @@ export class EcsApp extends Construct {
     });
     this.service.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '10');
 
-    // Override Lumigo tracer image to latest version
-    const taskDef = (this.service.taskDefinition.node.defaultChild as aws_ecs.CfnTaskDefinition);
-    taskDef.addPropertyOverride('ContainerDefinitions.1.Image', 'public.ecr.aws/lumigo/lumigo-autotrace:v14');
-
   }
 }
