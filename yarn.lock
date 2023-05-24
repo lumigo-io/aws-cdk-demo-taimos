@@ -760,10 +760,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@lumigo/cdk-constructs-v2@^0.1.26":
-  version "0.1.26"
-  resolved "https://registry.yarnpkg.com/@lumigo/cdk-constructs-v2/-/cdk-constructs-v2-0.1.26.tgz#5b8078c25f7f7fb1ab4523d4cc0f92856f1c3602"
-  integrity sha512-Eqv1sYEYdWykmpkaOphQmd7rGstCsH98DLFRva50VkRyw0ARXDwIJ5YxRH1rJcftODkUjQBuu8ZQqA+fDIIVJw==
+"@lumigo/cdk-constructs-v2@^0.1.27":
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/@lumigo/cdk-constructs-v2/-/cdk-constructs-v2-0.1.27.tgz#83ca95dbe22a2d11fd3146d3b06c5035a2d3dcf6"
+  integrity sha512-s5E6uqIecA5t6r+IdvTV69b3v6p1mHjQrTGcjo6YZSGFhpbVxaq/Ugkz1OBpDzGsh4iN04IFJqNmZMUN0mjMWg==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"

@@ -19,7 +19,6 @@ new AppStack(app, 'aws-cdk-demo-taimos-hoegertn', {
   },
 });
 
-// new Lumigo({ lumigoToken: SecretValue.secretsManager('AccessKeys', { jsonField: 'LumigoToken' }) }).traceEverything(app);
 new Lumigo({ lumigoToken: SecretValue.secretsManager('LumigoToken') }).traceEverything(app);
 
 app.synth();

@@ -44,7 +44,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@lumigo/cdk-constructs-v2": "^0.1.26",
+    "@lumigo/cdk-constructs-v2": "^0.1.27",
     "aws-cdk-github-oidc": "^2.3.2",
     "aws-cdk-lib": "^2.77.0",
     "axios": "^1.4.0",
