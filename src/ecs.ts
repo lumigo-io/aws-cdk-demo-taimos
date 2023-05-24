@@ -1,18 +1,25 @@
+// Importing the required modules
 import path from 'path';
 import { Duration, aws_ec2, aws_ecr_assets, aws_ecs, aws_ecs_patterns } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
+// Defining the EcsAppProps interface
 export interface EcsAppProps {
   //
 }
 
+// The following Typescript code defines an Amazon ECS application stack using AWS CDK.
+// The stack creates a VPC, an Application Load Balanced Fargate service,
+// a target group, and other related resources.
 export class EcsApp extends Construct {
 
+  // Declaring a public property for the Application Load Balancer Fargate service
   public readonly service: aws_ecs_patterns.ApplicationLoadBalancedFargateService;
 
   constructor(scope: Construct, id: string, _props: EcsAppProps) {
     super(scope, id);
 
+    // Creating a new VPC with only public subnets
     const vpc = new aws_ec2.Vpc(this, 'Vpc', {
       maxAzs: 3,
       natGateways: 0,
@@ -23,6 +30,7 @@ export class EcsApp extends Construct {
       }],
     });
 
+    // Adding an Application Load Balanced Fargate service
     this.service = new aws_ecs_patterns.ApplicationLoadBalancedFargateService(this, 'Resource', {
       vpc,
       assignPublicIp: true,
@@ -31,19 +39,23 @@ export class EcsApp extends Construct {
       },
       taskImageOptions: {
         containerPort: 8080,
+        // Specifying the Docker image to use and its location
         image: aws_ecs.ContainerImage.fromAsset(path.join(__dirname, '..', 'ecs-app'), {
           platform: aws_ecr_assets.Platform.LINUX_AMD64,
         }),
       },
       healthCheckGracePeriod: Duration.minutes(5),
     });
+
+    // Configuring a health check for the target group associated with the Application Load Balancer Fargate service
     this.service.targetGroup.configureHealthCheck({
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 2,
       interval: Duration.seconds(15),
       timeout: Duration.seconds(10),
     });
-    this.service.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '10');
 
+    // Setting a deregistration delay for the target group to make deployments faster
+    this.service.targetGroup.setAttribute('deregistration_delay.timeout_seconds', '10');
   }
 }

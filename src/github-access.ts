@@ -7,12 +7,18 @@ export interface GitHubAccessStackProps extends StackProps {
   //
 }
 
+// The following TypeScript code defines a GitHubAccessStack stack that creates
+// an AWS Identity and Access Management (IAM) role for deploying an AWS
+// CloudFormation stack from GitHub Actions using the aws-cdk-github-oidc library.
 export class GitHubAccessStack extends Stack {
   constructor(scope: Construct, id: string, props: GitHubAccessStackProps) {
     super(scope, id, props);
 
+    // Create a new GithubActionsIdentityProvider instance from the current GitHub account
     const provider = GithubActionsIdentityProvider.fromAccount(this, 'Provider');
 
+    // Create a new GithubActionsRole instance with a filter for the main branch of a specific repository,
+    // and add an inline policy to allow assuming roles whose name starts with "cdk". (Bootstrap roles)
     const deployRole = new GithubActionsRole(this, 'GitHubDeployRole', {
       provider: provider,
       owner: 'lumigo-io',
@@ -28,6 +34,7 @@ export class GitHubAccessStack extends Stack {
       },
     });
 
+    // Output the ARN of the created GitHubActionsRole
     new CfnOutput(this, 'GitHubAdminRoleArn', { value: deployRole.roleArn });
   }
 }
