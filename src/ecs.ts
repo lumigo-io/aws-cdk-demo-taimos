@@ -38,9 +38,14 @@ export class EcsApp extends Construct {
         rollback: true,
       },
       taskImageOptions: {
+        // This port matches the default port bound by the containerized Spring Boot application you
+        // find in <repo_root>/ecs-app
         containerPort: 8080,
         // Specifying the Docker image to use and its location
         image: aws_ecs.ContainerImage.fromAsset(path.join(__dirname, '..', 'ecs-app'), {
+          // Ensure that the architecture used to build the image is compatible with the one running the ECS cluster.
+          // If you are using an ARM-based machine, e.g., an Apple M1, make sure you have Docker Buildkit available,
+          // so that you can build an AMD64 image on your ARM64 architecture.
           platform: aws_ecr_assets.Platform.LINUX_AMD64,
         }),
       },
