@@ -19,6 +19,18 @@ new AppStack(app, 'aws-cdk-demo-taimos-hoegertn', {
   },
 });
 
+////
+//// To deploy your application in your own account, uncomment
+//// the code below and customize the settings to fit your setup 
+////
+// new AppStack(app, 'aws-cdk-demo-mine', {
+//  env: {
+//    account: <aws_account_id>, // TODO: Replace this with the actual account id
+//    region: <aws_region>, // TODO: Replace this with the actual region id
+//  },
+// });
+
+// TODO Ensure you have created an AWS SecretsManager service with your Lumigo token
 new Lumigo({ lumigoToken: SecretValue.secretsManager('LumigoToken') }).traceEverything(app);
 
 app.synth();
