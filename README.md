@@ -11,6 +11,7 @@ Before you can use this demo project, ensure that you have the following install
 - An AWS account.
 - [AWS CLI version 2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) latest version installed.
 - AWS CDK 2 [installed](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html) and [bootstrapped](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) in your AWS account.
+- A local Docker daemon for the AWS CDK to build your containers. If you do not have one, a good choice for getting started is [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 You also need to configure your [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
 
