@@ -34,9 +34,16 @@ To get started, follow these steps:
    **Important:** Make sure that the AWS CDK is [bootstrapped](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for the selected region in the account you choose.
 
 4. Ensure you have [AWS CLI credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) configured for the AWS account id you are going to use.
-5. Deploy the stack using `cdk deploy <stack_name>`. This command uses the AWS CDK to create all the necessary resources for our stack. If you use multiple AWS accounts and have different [profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles) for your AWS CLI, pass the right one to the CDK by doing `cdk deploy <stack_name> --profile <profile_name> `
-6. Verify the deployed stack by checking the output from the `cdk deploy` command.
-7. Trigger the Lambda function by sending an event to EventBridge. You should see the logs being sent to Lumigo, which provides observability into the AWS resources used by the stack.
+5. [Create a Lumigo account](https://platform.lumigo.io/auth/signup) and follow the onboarding process.
+6. After you have access to your Lumigo project, [retrieve the Lumigo token](https://docs.lumigo.io/docs/lumigo-tokens) and store it in an AWS SecretsManager secret:
+
+   ```sh
+   aws secretsmanager create-secret --name LumigoToken --secret-string <LumigoToken>
+   ```
+
+7. Deploy the stack using `cdk deploy <stack_name>`. This command uses the AWS CDK to create all the necessary resources for our stack. If you use multiple AWS accounts and have different [profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#cli-configure-files-using-profiles) for your AWS CLI, pass the right one to the CDK by doing `cdk deploy <stack_name> --profile <profile_name> `
+8. Verify the deployed stack by checking the output from the `cdk deploy` command.
+9. Trigger the Lambda function by sending an event to EventBridge. You should see the logs being sent to Lumigo, which provides observability into the AWS resources used by the stack.
 
 ## Project Structure
 The project is structured as follows:
