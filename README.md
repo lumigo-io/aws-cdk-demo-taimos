@@ -2,7 +2,7 @@
 
 This repository contains a demo application that demonstrates how to develop and deploy non-trivial cloud applications on AWS using AWS Lambda, Amazon ECS, the AWS Cloud Development Kit (CDK) 2 and other AWS services. 
 
-The focus of this demo is on observability, and we will be using [Lumigo](https://lumigo.io) as our observability tool of choice. With [just one line of code](https://github.com/lumigo-io/aws-cdk-demo-taimos/blob/439eff3cbb067781170a99046e57c0f8841f63d0/src/main.ts#L22) in our CDK application, we get our Cloud applications monitored seamlessly with Lumigo.
+The focus of this demo is on observability, and we will be using [Lumigo](https://lumigo.io)as our observability tool of choice. By adopting the [Lumigo CDK Constructs](https://github.com/lumigo-io/lumigo-cdk-constructs), with [just one line of code](https://github.com/lumigo-io/aws-cdk-demo-taimos/blob/439eff3cbb067781170a99046e57c0f8841f63d0/src/main.ts#L22) in our CDK application, we get our Cloud applications monitored seamlessly with Lumigo.
 
 ## Prerequisites
 Before you can use this demo project, ensure that you have the following installed:
